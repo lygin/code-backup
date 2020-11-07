@@ -1,9 +1,10 @@
 #include <bits/stdc++.h>
 using namespace std;
-//邻接矩阵储存 
-//T（n） = O（n*n） n为结点个数 
+//单源有权最短路，第二限制：边权最短 
+//矩阵储存 ,G[i][j]表示从i到j的距离 
+//纯Dijkstra:O(V^2) Easier than DFS+ 
 const int N = 510;
-int e[N][N], dist[N], cost[N][N], pre[N], mincost[N];
+int e[N][N], dist[N], cost[N][N], pre[N], mincost[N];//确保只有一条最优路径 
 bool visit[N];
 const int inf = 1e9;
 
@@ -12,7 +13,7 @@ int main() {
 	scanf("%d%d%d%d", &n, &m, &s, &d);
 	fill(e[0], e[0]+N*N, inf);
 	fill(dist, dist+N, inf);
-	//fill(mincost, mincost+N, inf);
+	fill(mincost, mincost+N, inf);
 	memset(visit,0,sizeof(visit));
 	for(int i=0; i<m; ++i) {
 		int a,b;
@@ -33,15 +34,15 @@ int main() {
 				minn=dist[j];
 			}
 		}
-		//if(u == -1) break;
+		if(u == -1) break;//不连通退出 
 		visit[u] = true;
 		for(int v=0; v<n; ++v) {
 			if(!visit[v] && e[u][v] != inf) {
-				if(dist[u]+e[u][v] < dist[v]) {
+				if(dist[u]+e[u][v] < dist[v]) {//更新所有 
 					dist[v] = dist[u] + e[u][v];
 					mincost[v] = mincost[u] + cost[u][v];
 					pre[v] = u;
-				} else if(dist[u]+e[u][v] == dist[v]) {
+				} else if(dist[u]+e[u][v] == dist[v]) { //若mincost变小才更新 
 					if(mincost[u] + cost[u][v] < mincost[v]) {
 						mincost[v] = mincost[u]+cost[u][v];
 						pre[v] = u;
